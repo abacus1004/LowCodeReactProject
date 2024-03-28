@@ -1,45 +1,63 @@
 import React, { useState } from 'react';
 import Editor from '@monaco-editor/react';
-import * as monaco from 'monaco-editor';
+import * as monaco from 'monaco-editor'
 
 
 function MonacoEditorComponent() {
 
-  const [suggestionsArray] = useState(['Suggestion1', 'Suggestion2', 'Suggestion3']);
+  const functionCoreSuggestions = [
+    {
+      label: 'getCookie',
+      kind: monaco.languages.CompletionItemKind.Keyword,
+      insertText: 'getCookie',
+    },
+    {
+      label: 'sleep',
+      kind: monaco.languages.CompletionItemKind.Keyword,
+      insertText: 'sleep',
+    },
+    {
+      label: 'setCookie',
+      kind: monaco.languages.CompletionItemKind.Keyword,
+      insertText: 'setCookie',
+    },
+    {
+      label: 'goToDivId',
+      kind: monaco.languages.CompletionItemKind.Keyword,
+      insertText: 'goToDivId',
+    }
+  ]
 
+  const functionSuggestions = [
+    {
+      label: 'core',
+      kind: monaco.languages.CompletionItemKind.Variable,
+      insertText: 'core',
+    }
+  ]
 
   const provideCustomSuggestions = (model, position) => {
+    var lineContent = model.getLineContent(position.lineNumber);
 
-    var word = model.getWordUntilPosition(position);
-  
-    var rangeVar = {
-      startLineNumber: position.lineNumber,
-      endLineNumber: position.lineNumber,
-      startColumn: word.startColumn,
-      endColumn: word.endColumn,
-    };
-
-    
-    const suggestions = suggestionsArray.map(keyword => ({
-      label: keyword,
-      kind: monaco.languages.CompletionItemKind.Keyword,
-      insertText: keyword,
-      range: rangeVar
-  }));
-  
-    return { suggestions: suggestions };
+    if(lineContent === 'functions.core.'){
+      return { suggestions: functionCoreSuggestions };
+    }
+    else if(lineContent === 'functions.'){
+      return { suggestions: functionSuggestions };
+    }
   };
   
-  const handleEditorWillMount = (monaco) => {
+  const handleEditorDidMount = (editor, monaco) => {
     monaco.languages.registerCompletionItemProvider('javascript', {
       provideCompletionItems: provideCustomSuggestions,
+      triggerCharacters: ["."]
     });
   };
 
   return <Editor height="90vh"
                  language="javascript"
                  defaultValue="// Type Code here"
-                 beforeMount={handleEditorWillMount}
+                 onMount = {handleEditorDidMount}
         />;
 };
 
