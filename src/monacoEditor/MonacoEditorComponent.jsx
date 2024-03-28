@@ -19,6 +19,7 @@ function MonacoEditorComponent() {
       endColumn: word.endColumn,
     };
 
+    
     const suggestions = suggestionsArray.map(keyword => ({
       label: keyword,
       kind: monaco.languages.CompletionItemKind.Keyword,
